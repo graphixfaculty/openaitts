@@ -23,20 +23,23 @@ async def on_command_error(ctx, error):
 
 @bot.event
 async def on_message(message):
-    print(message.content)
-    print(message.content.split('>')[1].lstrip())
-    messages.append({"role": "user", "content": message.content.split('>')[1].lstrip()})
+    if message.author == bot.user:
+        return
+    if bot.user.id in [member.id for member in message.mentions]:
+        print(message.content)
+        print(message.content.split('>')[1].lstrip())
+        messages.append({"role": "user", "content": message.content.split('>')[1].lstrip()})
 
-    openai_api_key = getenv('OPENAI_API_KEY')
-    openai.api_key = openai_api_key
+        openai_api_key = getenv('OPENAI_API_KEY')
+        openai.api_key = openai_api_key
 
-    completion = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=messages
-    )
+        completion = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=messages
+        )
 
-    print(completion.choices[0].message.content)
-    await message.channel.send(completion.choices[0].message.content)
+        print(completion.choices[0].message.content)
+        await message.channel.send(completion.choices[0].message.content)
 
 token = getenv('DISCORD_BOT_TOKEN')
 bot.run(token)
