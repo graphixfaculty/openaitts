@@ -1,39 +1,45 @@
 import discord
+import traceback
 from discord.ext import commands
 from os import getenv
 import openai
-import traceback
 
 intents = discord.Intents.default()
 intents.message_content = True
 
 bot = commands.Bot(command_prefix='/', intents=intents)
-openai.api_key = getenv('OPENAI_API_KEY')  # APIキーを初期化
+
+messages = [
+    {"role": "system", "content": "You are a helpful assistant. The AI assistant's name is AI Qiitan."},
+    {"role": "user", "content": "こんにちは。あなたは誰ですか？"},
+    {"role": "assistant", "content": "私は AI アシスタントの AI Qiitan です。なにかお手伝いできることはありますか？"}
+]
 
 @bot.event
 async def on_command_error(ctx, error):
-    error_msg = "An error occurred. Please try again later."
+    orig_error = getattr(error, "original", error)
+    error_msg = ''.join(traceback.TracebackException.from_exception(orig_error).format())
     await ctx.send(error_msg)
-    print(''.join(traceback.TracebackException.from_exception(error).format()))  # ログ出力
 
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
         return
-    if bot.user.mentioned_in(message):
-        user_id = message.author.id
-        if user_id not in messages:
-            messages[user_id] = []
-        content = message.content.replace(message.guild.me.mention, '').strip()
-        messages[user_id].append({"role": "user", "content": content})
+    if bot.user.id in [member.id for member in message.mentions]:
+        print(message.content)
+        print(message.content.split('>')[1].lstrip())
+        messages.append({"role": "user", "content": message.content.split('>')[1].lstrip()})
+
+        openai_api_key = getenv('OPENAI_API_KEY')
+        openai.api_key = openai_api_key
 
         completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
-            messages=messages[user_id]
+            messages=messages
         )
 
-        reply = completion.choices[0].message['content']
-        await message.channel.send(reply)
-        messages[user_id].append({"role": "assistant", "content": reply})
+        print(completion.choices[0].message.content)
+        await message.channel.send(completion.choices[0].message.content)
 
-bot.run(getenv('DISCORD_BOT_TOKEN'))
+token = getenv('DISCORD_BOT_TOKEN')
+bot.run(token)
