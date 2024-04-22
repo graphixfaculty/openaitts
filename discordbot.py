@@ -41,5 +41,9 @@ async def on_message(message):
         print(completion.choices[0].message.content)
         await message.channel.send(completion.choices[0].message.content)
 
+@bot.command()
+async def neko(ctx):
+    await ctx.send('pong')
+
 token = getenv('DISCORD_BOT_TOKEN')
 bot.run(token)
