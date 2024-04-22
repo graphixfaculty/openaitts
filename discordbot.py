@@ -1,45 +1,52 @@
+# OpenAI_Bot.py
+import os
+
 import discord
-import traceback
-from discord.ext import commands
-from os import getenv
 import openai
 
-intents = discord.Intents.default()
-intents.message_content = True
 
-bot = commands.Bot(command_prefix='/', intents=intents)
+from dotenv import load_dotenv
 
-messages = [
-    {"role": "system", "content": "You are a helpful assistant. The AI assistant's name is chatGPT."},
-    {"role": "user", "content": "こんにちは。あなたは誰ですか？"},
-    {"role": "assistant", "content": "私は AI アシスタントの chatGPT です。なにかお手伝いできることはありますか？"}
-]
+load_dotenv()
+DISCORD_TOKEN = os.getenv('DISCORD_BOT_TOKEN')
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
+bot = discord.Client(intents=discord.Intents.all())
+
+# EVENT LISTENER FOR WHEN THE BOT HAS SWITCHED FROM OFFLINE TO ONLINE.
 @bot.event
-async def on_command_error(ctx, error):
-    orig_error = getattr(error, "original", error)
-    error_msg = ''.join(traceback.TracebackException.from_exception(orig_error).format())
-    await ctx.send(error_msg)
+async def on_ready():
+    # CREATES A COUNTER TO KEEP TRACK OF HOW MANY GUILDS / SERVERS THE BOT IS CONNECTED TO.
+    guild_count = 0
 
+    # LOOPS THROUGH ALL THE GUILD / SERVERS THAT THE BOT IS ASSOCIATED WITH.
+    for guild in bot.guilds:
+        # PRINT THE SERVER'S ID AND NAME.
+        print(f"- {guild.id} (name: {guild.name})")
+
+        # INCREMENTS THE GUILD COUNTER.
+        guild_count = guild_count + 1
+
+    # PRINTS HOW MANY GUILDS / SERVERS THE BOT IS IN.
+    print("OpenAIBot is in " + str(guild_count) + " guilds.")
+
+
+# EVENT LISTENER FOR WHEN A NEW MESSAGE IS SENT TO A CHANNEL.
 @bot.event
 async def on_message(message):
-    if message.author == bot.user:
-        return
-    if bot.user.id in [member.id for member in message.mentions]:
-        print(message.content)
-        print(message.content.split('>')[1].lstrip())
-        messages.append({"role": "user", "content": message.content.split('>')[1].lstrip()})
+    # CHECKS IF THE MESSAGE THAT WAS SENT IS EQUAL TO "HELLO".
+    if message.content.find('AI!') != -1:
 
-        openai_api_key = getenv('OPENAI_API_KEY')
-        openai.api_key = openai_api_key
-
-        completion = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=messages
+        response = openai.Completion.create(
+            model="text-davinci-002",
+            prompt=message.content[3:],
+            temperature=0.7,
+            max_tokens=256,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0
         )
+        await message.channel.send(response["choices"][0]["text"])
 
-        print(completion.choices[0].message.content)
-        await message.channel.send(completion.choices[0].message.content)
-
-token = getenv('DISCORD_BOT_TOKEN')
-bot.run(token)
+bot.run(DISCORD_TOKEN)
+# EXECUTES THE BOT WITH THE SPECIFIED DISCORD_TOKEN. DISCORD_TOKEN HAS BEEN REMOVED AND USED JUST AS AN EXAMPLE.
