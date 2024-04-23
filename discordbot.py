@@ -23,14 +23,13 @@ async def on_command_error(ctx, error):
     error_msg = 'An unexpected error occurred. Please try again.'
     await ctx.send(error_msg)
     # Logging the error
-    print(''.join(traceback.TracebackException.from_exception(orig_error).format()))
+    print('Error occurred:', traceback.format_exception_only(type(orig_error), orig_error))
 
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
         return
     
-    # Handling mentions properly
     if bot.user in message.mentions:
         user_msg = message.content.replace(f'<@{bot.user.id}>', '').strip()
         print(user_msg)
@@ -45,7 +44,9 @@ async def on_message(message):
             print(bot_response)
             await message.channel.send(bot_response)
         except Exception as e:
-            await message.channel.send("Error processing your request, please try again.")
-            print(e)
+            error_details = f"Error: {str(e)}"  # Capturing error details
+            print(error_details)  # Logging error
+            await message.channel.send(error_details)
+            # Optionally, you could log more detailed errors in a file or external logging service here
 
 bot.run(getenv('DISCORD_BOT_TOKEN'))
