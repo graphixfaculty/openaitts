@@ -41,7 +41,7 @@ async def on_message(message):
                 model="gpt-3.5-turbo",
                 messages=messages
             )
-            bot_response = completion.choices[0].message['content']
+            bot_response = completion.choices[0].message.content
             print(bot_response)
             await message.channel.send(bot_response)
         except Exception as e:
