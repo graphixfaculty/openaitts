@@ -5,7 +5,6 @@ from os import getenv
 import openai
 import traceback
 import asyncio
-client = OpenAI()
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -57,6 +56,7 @@ async def on_message(message):
             print(bot_response)
 
             # Generate voice from text
+            client = OpenAI()
             response = client.audio.speech.create(
                 model="tts-1",
                 voice="alloy",
