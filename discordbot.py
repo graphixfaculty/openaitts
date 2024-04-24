@@ -58,6 +58,7 @@ async def on_message(message):
             )
             
             # Save audio to a file
+            audio_data = response.read()
             with open('response.ogg', 'wb') as audio_file:
                 audio_file.write(response['audio'])
 
