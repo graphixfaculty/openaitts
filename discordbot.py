@@ -56,8 +56,8 @@ async def on_message(message):
             print(bot_response)
 
             # Generate voice from text
-            client = OpenAI()
-            response = client.audio.speech.create(
+            # client = OpenAI()
+            response = audio.speech.create(
                 model="tts-1",
                 voice="alloy",
                 input=bot_response
