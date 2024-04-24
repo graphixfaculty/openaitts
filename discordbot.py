@@ -75,6 +75,6 @@ async def on_message(message):
         except Exception as e:
             error_details = f"Error: {str(e)}"
             print(error_details)
-            await message.channel.send("There was a problem processing your request. Please try again later.")
+            await message.channel.send(error_details)
 
 bot.run(getenv('DISCORD_BOT_TOKEN'))
