@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 from os import getenv
-import openai
+from openai import OpenAI
 import traceback
 import asyncio
 
@@ -56,8 +56,8 @@ async def on_message(message):
             print(bot_response)
 
             # Generate voice from text
-            # client = OpenAI()
-            response = audio.speech.create(
+            client = OpenAI()
+            response = client.audio.speech.create(
                 model="tts-1",
                 voice="alloy",
                 input=bot_response
