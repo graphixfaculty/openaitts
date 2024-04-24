@@ -48,20 +48,12 @@ async def on_message(message):
         print(user_msg)
 
         try:
-            completion = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=[{"role": "system", "content": "You are a helpful assistant."}, 
-                          {"role": "user", "content": user_msg}]
-            )
-            bot_response = completion.choices[0]['message']['content']
-            print(bot_response)
-
             # Generate voice from text
-           # client = OpenAI(api_key=getenv('OPENAI_API_KEY'))
+            # client = OpenAI(api_key=getenv('OPENAI_API_KEY'))
             response = openai.audio.speech.create(
                 model="tts-1",
                 voice="alloy",
-                input=bot_response
+                input=user_msg
             )
             
             # Save audio to a file
