@@ -64,8 +64,8 @@ async def on_message(message):
                 #audio_file.write(response['audio'])
 
             # Play audio in a voice channel
-            await message.author.voice.channel.connect()
-            if message.guild.voice_client is not None:
+            # if message.guild.voice_client is not None:
+            if message.guild.voice_client is None:
                 source = discord.FFmpegOpusAudio('response.ogg')
                 message.guild.voice_client.play(source, after=lambda e: print('Player error: %s' % e) if e else None)
             else:
