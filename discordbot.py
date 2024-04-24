@@ -60,7 +60,8 @@ async def on_message(message):
             # Save audio to a file
             audio_data = response.read()
             with open('response.ogg', 'wb') as audio_file:
-                audio_file.write(response['audio'])
+                audio_file.write(audio_data)
+                #audio_file.write(response['audio'])
 
             # Play audio in a voice channel
             if message.guild.voice_client is not None:
