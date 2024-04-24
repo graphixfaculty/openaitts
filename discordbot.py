@@ -25,7 +25,7 @@ async def on_command_error(ctx: Context, error):
     await ctx.send('An unexpected error occurred. Please try again.')
     print('Error occurred:', traceback.format_exception_only(type(error), error))
 
-@bot.command(name='vjoin')
+@bot.command(name='join')
 async def join(ctx):
     """Joins a voice channel"""
     channel = ctx.author.voice.channel
