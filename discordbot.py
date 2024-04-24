@@ -11,7 +11,7 @@ intents = discord.Intents.default()
 intents.message_content = True
 intents.guilds = True
 intents.voice_states = True
-bot = commands.Bot(command_prefix='/', intents=intents)
+bot = commands.Bot(command_prefix='!', intents=intents)
 
 #openai.api_key = getenv('OPENAI_API_KEY')
 apikey = getenv('OPENAI_API_KEY')
@@ -25,7 +25,7 @@ async def on_command_error(ctx: Context, error):
     await ctx.send('An unexpected error occurred. Please try again.')
     print('Error occurred:', traceback.format_exception_only(type(error), error))
 
-@bot.command(name='vjoin')
+@bot.command(name='join')
 async def join(ctx):
     """Joins a voice channel"""
     channel = ctx.author.voice.channel
@@ -64,8 +64,7 @@ async def on_message(message):
                 #audio_file.write(response['audio'])
 
             # Play audio in a voice channel
-            # if message.guild.voice_client is not None:
-            if message.guild.voice_client is None:
+            if message.guild.voice_client is not None:
                 source = discord.FFmpegOpusAudio('response.ogg')
                 message.guild.voice_client.play(source, after=lambda e: print('Player error: %s' % e) if e else None)
             else:
