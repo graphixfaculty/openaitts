@@ -63,7 +63,7 @@ async def on_message(message):
                 audio_file.write(audio_data)
                 #audio_file.write(response['audio'])
             
-            with open('response.mp3', 'wb') as audio_file:
+            with open('response.mp3', 'rb') as audio_file:
                 await message.channel.send(file=discord.File(audio_file, 'response.mp3'))
 
         except Exception as e:
