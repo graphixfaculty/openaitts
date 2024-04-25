@@ -62,13 +62,16 @@ async def on_message(message):
             with open('response.ogg', 'wb') as audio_file:
                 audio_file.write(audio_data)
                 #audio_file.write(response['audio'])
+            　　　await message.channel.send(file=discord.File(audio_file, 'response.mp3'))
 
             # Play audio in a voice channel
+            """
             if message.guild.voice_client is not None:
                 source = discord.FFmpegOpusAudio('response.ogg')
                 message.guild.voice_client.play(source, after=lambda e: print('Player error: %s' % e) if e else None)
             else:
                 await message.channel.send("Bot is not connected to a voice channel.")
+            """
 
         except Exception as e:
             error_details = f"Error: {str(e)}"
