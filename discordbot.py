@@ -53,7 +53,7 @@ async def on_message(message):
             client = OpenAI(api_key=apikey)
             response = client.audio.speech.create(
                 model="tts-1",
-                voice="shimmer",
+                voice="nova",
                 input=user_msg
             )
             
